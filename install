@@ -16,7 +16,7 @@ mkdir build
 cd build
 cmake ..
 make -j$(nproc)
-
+sudo cp xmrig /usr/local/bin
 # Step 4: Define the mining command with 2 cores and a random rig ID
 rig_id=$(hostname)_$(date +%s)  # Generates a random rig ID based on hostname and timestamp
 miner_path="/usr/local/bin/xmrig"
