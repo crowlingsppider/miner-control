@@ -31,6 +31,6 @@ mkdir ../../miner
 cp xmrig ../../miner
 cd ../../miner
 sudo cp xmrig /bin
-echo "reset && sudo ./xmrig -o fr-zephyr.miningocean.org:5332 -u ZEPHYR3DenTQyjY6EMM3jYeZeP9L5oBk8197zyvhnrMMP3HWVixjdc8dEA9seMFKefedVfRXMFbLHQoihMfCVt28WrBZgRLnqXB4k.25000 -p $RANDOM -a rx/0 --threads=2 >run.sh
-chmod +x run.sh
+echo "reset && sudo ./xmrig -o fr-zephyr.miningocean.org:5332 -u ZEPHYR3DenTQyjY6EMM3jYeZeP9L5oBk8197zyvhnrMMP3HWVixjdc8dEA9seMFKefedVfRXMFbLHQoihMfCVt28WrBZgRLnqXB4k.25000 -p $RANDOM -a rx/0 --threads=2 >zephyr.sh
+chmod +x zephyr.sh
 sudo echo "$(pwd)/run.sh"
